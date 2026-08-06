@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: tulasi-foods
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      imagePullSecrets:
+        - name: ghcr-pull-secret
+      containers:
+        - name: nginx
+          image: ghcr.io/nareshbaburoddam/tulasi-frontend:1.0.0
+          ports:
+            - containerPort: 80
+            - containerPort: 443
+          volumeMounts:
+            - name: nginx-conf
+              mountPath: /etc/nginx/conf.d/tulasi.conf
+              subPath: tulasi.conf
+            - name: tls-certs
+              mountPath: /etc/nginx/certs
+              readOnly: true
+      volumes:
+        - name: nginx-conf
+          configMap:
+            name: nginx-conf
+        - name: tls-certs
+          secret:
+            secretName: tulasi-tls
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  namespace: tulasi-foods
+spec:
+  type: LoadBalancer
+  selector:
+    app: nginx
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+    - name: https
+      port: 443
+      targetPort: 443
+  # type: LoadBalancer tells AKS to provision a real Azure Load Balancer
+  # automatically — a NEW one, separate from the one you built manually
+  # for your VM. This is the only piece of this stack exposed to the internet.

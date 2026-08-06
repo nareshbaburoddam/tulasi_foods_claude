@@ -204,6 +204,8 @@ def format_customer_request(req: CustomerRequest):
         "mobile_number": req.mobile_number or "",
         "location": req.location or "",
         "requested_materials": cleaned_materials,
+        "fulfillment_type": req.fulfillment_type or "",
+        "scheduled_date": req.scheduled_date or "",
         "status": current_status,
         "status_color": get_status_color(current_status),
         "remarks": req.remarks or "",
@@ -221,6 +223,8 @@ class CustomerRequestCreate(BaseModel):
     location: Optional[str] = None
     items: Optional[Union[List[Any], dict, str]] = None
     requested_materials: Optional[Union[List[Any], dict, str]] = Field(default=None, alias="requestedMaterials")
+    fulfillment_type: Optional[str] = Field(default=None, alias="fulfillmentType")
+    scheduled_date: Optional[str] = Field(default=None, alias="scheduledDate")
 
     class Config:
         populate_by_name = True
@@ -232,9 +236,17 @@ async def create_customer_request(payload: CustomerRequestCreate, db: Session = 
     m_num = payload.mobile_number or payload.phone or ""
     loc = payload.place or payload.location or ""
     mats = payload.items or payload.requested_materials or ""
+    fulfillment = payload.fulfillment_type or ""
+    sched_date = payload.scheduled_date or ""
 
     if not m_num or not m_num.strip():
         raise HTTPException(status_code=422, detail="Mobile number is required")
+
+    if fulfillment not in ("Pickup", "Delivery"):
+        raise HTTPException(status_code=422, detail="fulfillment_type must be 'Pickup' or 'Delivery'")
+
+    if not sched_date or not sched_date.strip():
+        raise HTTPException(status_code=422, detail="scheduled_date is required")
 
     mat_str = json.dumps(mats, ensure_ascii=False) if isinstance(mats, (list, dict)) else str(mats)
 
@@ -243,6 +255,8 @@ async def create_customer_request(payload: CustomerRequestCreate, db: Session = 
         mobile_number=m_num,
         location=loc,
         requested_materials=mat_str,
+        fulfillment_type=fulfillment,
+        scheduled_date=sched_date,
         status="Pending",
     )
     db.add(db_req)

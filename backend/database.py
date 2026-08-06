@@ -30,5 +30,7 @@ class CustomerRequest(Base):
     mobile_number = Column(String, nullable=False)
     location = Column(String, nullable=False)
     requested_materials = Column(Text, nullable=False)
+    fulfillment_type = Column(String, nullable=True)   # "Pickup" or "Delivery"
+    scheduled_date = Column(String, nullable=True)      # date customer picks (pickup) or wants delivery
     status = Column(String, default="Pending")
     remarks = Column(Text, nullable=True)

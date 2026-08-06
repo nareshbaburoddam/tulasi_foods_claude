@@ -206,6 +206,25 @@
           </div>
 
           <div>
+            <label data-i18n="labelFulfillment" class="block text-sm font-semibold text-gray-700 mb-2">How would you like to get your items?</label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <label class="flex items-center space-x-3 p-3 rounded-lg border border-gray-300 cursor-pointer fulfillment-option">
+                <input type="radio" name="fulfillmentType" value="Pickup" class="fulfillment-radio w-4 h-4 text-amber-600 focus:ring-amber-500 border-gray-300" required>
+                <span data-i18n="optPickup" class="text-sm font-medium text-gray-700">I'll collect it myself</span>
+              </label>
+              <label class="flex items-center space-x-3 p-3 rounded-lg border border-gray-300 cursor-pointer fulfillment-option">
+                <input type="radio" name="fulfillmentType" value="Delivery" class="fulfillment-radio w-4 h-4 text-amber-600 focus:ring-amber-500 border-gray-300" required>
+                <span data-i18n="optDelivery" class="text-sm font-medium text-gray-700">Please deliver to my place</span>
+              </label>
+            </div>
+          </div>
+
+          <div id="scheduledDateWrap" class="hidden">
+            <label id="scheduledDateLabel" data-i18n="labelPickupDate" class="block text-sm font-semibold text-gray-700 mb-1">Date you'll come to collect</label>
+            <input type="date" id="scheduledDate" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition-all">
+          </div>
+
+          <div>
             <label data-i18n="labelMaterials" class="block text-sm font-semibold text-gray-700 mb-2">Requested Materials / Opportunities</label>
             <div class="space-y-3 bg-gray-50 p-4 rounded-xl border border-gray-200">
 
@@ -367,6 +386,13 @@
         phMobile: "e.g. 9866322870",
         labelLocation: "Place / Location",
         phLocation: "e.g. Silkboard, Bangalore",
+        labelFulfillment: "How would you like to get your items?",
+        optPickup: "I'll collect it myself",
+        optDelivery: "Please deliver to my place",
+        labelPickupDate: "Date you'll come to collect",
+        labelDeliveryDate: "Date you'd like it delivered",
+        msgSelectFulfillment: "Please choose pickup or delivery.",
+        msgSelectDate: "Please select a date.",
         labelMaterials: "Requested Materials / Opportunities",
         optPaniPuri: "Pani Puri Box (200 Puris - ₹500)",
         optMasalaPuri: "Masala Puri Mix - ₹500",
@@ -419,6 +445,13 @@
         phMobile: "ಉದಾ. 9866322870",
         labelLocation: "ಸ್ಥಳ / ವಿಳಾಸ",
         phLocation: "ಉದಾ. ಸಿಲ್ಕ್ ಬೋರ್ಡ್, ಬೆಂಗಳೂರು",
+        labelFulfillment: "ನಿಮಗೆ ವಸ್ತುಗಳು ಹೇಗೆ ಬೇಕು?",
+        optPickup: "ನಾನೇ ತೆಗೆದುಕೊಂಡು ಹೋಗುತ್ತೇನೆ",
+        optDelivery: "ದಯವಿಟ್ಟು ನನ್ನ ಸ್ಥಳಕ್ಕೆ ತಲುಪಿಸಿ",
+        labelPickupDate: "ನೀವು ಬಂದು ಪಡೆಯುವ ದಿನಾಂಕ",
+        labelDeliveryDate: "ನಿಮಗೆ ಡೆಲಿವರಿ ಬೇಕಾದ ದಿನಾಂಕ",
+        msgSelectFulfillment: "ದಯವಿಟ್ಟು ಪಿಕಪ್ ಅಥವಾ ಡೆಲಿವರಿ ಆಯ್ಕೆ ಮಾಡಿ.",
+        msgSelectDate: "ದಯವಿಟ್ಟು ದಿನಾಂಕ ಆಯ್ಕೆ ಮಾಡಿ.",
         labelMaterials: "ಅಗತ್ಯವಿರುವ ಸಾಮಗ್ರಿಗಳು / ಅವಕಾಶಗಳು",
         optPaniPuri: "ಪಾನಿ ಪೂರಿ ಬಾಕ್ಸ್ (200 ಪೂರಿಗಳು - ₹500)",
         optMasalaPuri: "ಮಸಾಲಾ ಪೂರಿ ಮಿಕ್ಸ್ - ₹500",
@@ -471,6 +504,13 @@
         phMobile: "ఉదా. 9866322870",
         labelLocation: "ప్రాంతం / ప్రదేశం",
         phLocation: "ఉదా. సిల్క్ బోర్డ్, బెంగళూరు",
+        labelFulfillment: "మీకు వస్తువులు ఎలా కావాలి?",
+        optPickup: "నేనే వచ్చి తీసుకుంటాను",
+        optDelivery: "దయచేసి నా స్థలానికి డెలివరీ చేయండి",
+        labelPickupDate: "మీరు వచ్చి తీసుకునే తేదీ",
+        labelDeliveryDate: "మీకు డెలివరీ కావాల్సిన తేదీ",
+        msgSelectFulfillment: "దయచేసి పికప్ లేదా డెలివరీ ఎంచుకోండి.",
+        msgSelectDate: "దయచేసి తేదీని ఎంచుకోండి.",
         labelMaterials: "కావలసిన మెటీరియల్స్ / అవకాశాలు",
         optPaniPuri: "పానీ పూరీ బాక్స్ (200 పూరీలు - ₹500)",
         optMasalaPuri: "మసాలా పూరీ మిక్స్ - ₹500",
@@ -517,6 +557,20 @@
       });
     }
 
+    document.querySelectorAll('.fulfillment-radio').forEach(radio => {
+      radio.addEventListener('change', () => {
+        const dict = translations[currentLang] || translations.en;
+        const wrap = document.getElementById('scheduledDateWrap');
+        const label = document.getElementById('scheduledDateLabel');
+        wrap.classList.remove('hidden');
+        if (radio.value === 'Pickup') {
+          label.innerText = dict.labelPickupDate;
+        } else {
+          label.innerText = dict.labelDeliveryDate;
+        }
+      });
+    });
+
     document.getElementById('orderForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const statusMsg = document.getElementById('statusMsg');
@@ -525,6 +579,22 @@
       const selectedBoxes = Array.from(document.querySelectorAll('.item-checkbox:checked'));
       if (selectedBoxes.length === 0) {
         statusMsg.innerText = dict.msgSelectMaterial;
+        statusMsg.className = "mt-4 text-center text-sm font-semibold text-red-600";
+        statusMsg.classList.remove('hidden');
+        return;
+      }
+
+      const fulfillmentRadio = document.querySelector('.fulfillment-radio:checked');
+      if (!fulfillmentRadio) {
+        statusMsg.innerText = dict.msgSelectFulfillment;
+        statusMsg.className = "mt-4 text-center text-sm font-semibold text-red-600";
+        statusMsg.classList.remove('hidden');
+        return;
+      }
+
+      const scheduledDateVal = document.getElementById('scheduledDate').value;
+      if (!scheduledDateVal) {
+        statusMsg.innerText = dict.msgSelectDate;
         statusMsg.className = "mt-4 text-center text-sm font-semibold text-red-600";
         statusMsg.classList.remove('hidden');
         return;
@@ -545,7 +615,9 @@
         name: document.getElementById('customerName').value,
         mobile_number: document.getElementById('mobileNumber').value,
         place: document.getElementById('location').value,
-        items: itemsList
+        items: itemsList,
+        fulfillment_type: fulfillmentRadio.value,
+        scheduled_date: scheduledDateVal
       };
 
       try {
@@ -564,6 +636,7 @@
           statusMsg.className = "mt-4 text-center text-sm font-semibold text-green-600";
           document.getElementById('orderForm').reset();
           document.querySelectorAll('.item-qty').forEach(input => input.value = 1);
+          document.getElementById('scheduledDateWrap').classList.add('hidden');
         } else {
           throw new Error('Failed submission');
         }

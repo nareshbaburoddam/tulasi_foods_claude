@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: tulasi-foods
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      imagePullSecrets:
+        - name: ghcr-pull-secret
+      containers:
+        - name: backend
+          image: ghcr.io/nareshbaburoddam/tulasi-backend:1.0.0
+          ports:
+            - containerPort: 8000
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: tulasi-secrets
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: tulasi-secrets
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: tulasi-secrets
+                  key: POSTGRES_DB
+            # References the vars above via $(VAR) — same idea as string
+            # interpolation, resolved by Kubernetes before the container starts.
+            - name: DATABASE_URL
+              value: "postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@db:5432/$(POSTGRES_DB)"
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: tulasi-secrets
+                  key: SECRET_KEY
+            - name: ADMIN_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: tulasi-secrets
+                  key: ADMIN_USERNAME
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: tulasi-secrets
+                  key: ADMIN_PASSWORD
+            - name: ALLOWED_ORIGIN
+              value: "https://chaats.nareshroddam.in"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: tulasi-foods
+spec:
+  selector:
+    app: backend
+  ports:
+    - port: 8000
+      targetPort: 8000
+  # ClusterIP — internal only, reached by nginx via the service name "backend",
+  # exactly like your old docker-compose network did it.

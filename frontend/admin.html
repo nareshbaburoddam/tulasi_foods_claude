@@ -92,6 +92,8 @@
                                 <th>MOBILE NUMBER</th>
                                 <th>PLACE / LOCATION</th>
                                 <th>REQUESTED MATERIALS & QUANTITIES</th>
+                                <th>PICKUP / DELIVERY</th>
+                                <th>SCHEDULED DATE</th>
                                 <th>STATUS</th>
                                 <th>REMARKS</th>
                                 <th>ACTION</th>
@@ -294,6 +296,8 @@
                     <td class="text-warning fw-bold">${req.mobile_number}</td>
                     <td>${req.location}</td>
                     <td>${req.requested_materials}</td>
+                    <td>${req.fulfillment_type || '-'}</td>
+                    <td>${req.scheduled_date || '-'}</td>
                     <td>${statusHtml}</td>
                     <td>${remarksHtml}</td>
                     <td>${actionHtml}</td>
