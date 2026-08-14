@@ -3,6 +3,8 @@ kind: Deployment
 metadata:
   name: backend
   namespace: tulasi-foods
+  annotations:
+    gitops.argocd.io/training: "first-manual-sync"
 spec:
   replicas: 1
   selector:
