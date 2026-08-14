@@ -20,21 +20,14 @@ spec:
           image: ghcr.io/nareshbaburoddam/tulasi-frontend:1.0.0
           ports:
             - containerPort: 80
-            - containerPort: 443
           volumeMounts:
             - name: nginx-conf
               mountPath: /etc/nginx/conf.d/tulasi.conf
               subPath: tulasi.conf
-            - name: tls-certs
-              mountPath: /etc/nginx/certs
-              readOnly: true
       volumes:
         - name: nginx-conf
           configMap:
             name: nginx-conf
-        - name: tls-certs
-          secret:
-            secretName: tulasi-tls
 ---
 apiVersion: v1
 kind: Service
@@ -42,16 +35,12 @@ metadata:
   name: nginx
   namespace: tulasi-foods
 spec:
-  type: LoadBalancer
+  # No "type:" specified -> defaults to ClusterIP now. The Azure App Routing
+  # Ingress is the only thing exposed to the internet; this Service is only
+  # reachable from inside the cluster (by the Ingress Controller itself).
   selector:
     app: nginx
   ports:
     - name: http
       port: 80
       targetPort: 80
-    - name: https
-      port: 443
-      targetPort: 443
-  # type: LoadBalancer tells AKS to provision a real Azure Load Balancer
-  # automatically — a NEW one, separate from the one you built manually
-  # for your VM. This is the only piece of this stack exposed to the internet.
