@@ -63,6 +63,17 @@ spec:
               port: 8000
             initialDelaySeconds: 10
             periodSeconds: 10
+          volumeMounts:
+            - name: kv-secrets
+              mountPath: /mnt/kv-secrets
+              readOnly: true
+      volumes:
+        - name: kv-secrets
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: tulasi-kv-secrets
 ---
 apiVersion: v1
 kind: Service
