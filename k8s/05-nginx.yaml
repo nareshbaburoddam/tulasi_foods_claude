@@ -4,7 +4,7 @@ metadata:
   name: nginx
   namespace: tulasi-foods
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: nginx
@@ -15,6 +15,15 @@ spec:
     spec:
       imagePullSecrets:
         - name: ghcr-pull-secret
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: nginx
+                topologyKey: kubernetes.io/hostname
       containers:
         - name: nginx
           image: ghcr.io/nareshbaburoddam/tulasi-frontend:1.0.0
