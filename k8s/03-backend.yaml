@@ -31,6 +31,13 @@ spec:
           image: ghcr.io/nareshbaburoddam/tulasi-backend:1.0.0
           ports:
             - containerPort: 8000
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
           env:
             - name: POSTGRES_USER
               valueFrom:
