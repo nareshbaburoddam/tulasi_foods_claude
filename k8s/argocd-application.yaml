@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tulasi-foods
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/nareshbaburoddam/tulasi_foods_claude.git
+    targetRevision: main
+    path: k8s
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tulasi-foods
+
+  syncPolicy:
+    automated:
+      prune: true       # deletes cluster resources that got removed from git
+      selfHeal: true     # if someone manually kubectl-edits something, ArgoCD reverts it
+    syncOptions:
+      - CreateNamespace=true
