@@ -4,7 +4,9 @@ metadata:
   name: backend
   namespace: tulasi-foods
 spec:
-  #replicas: 2
+  # No "replicas:" here on purpose -- backend-hpa now owns this field.
+  # If we kept replicas:2 in git, ArgoCD's selfHeal would keep fighting
+  # HPA's scaling decisions every time it synced.
   selector:
     matchLabels:
       app: backend
@@ -54,10 +56,16 @@ spec:
                 secretKeyRef:
                   name: tulasi-secrets
                   key: POSTGRES_DB
+            - name: POSTGRES_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: tulasi-secrets
+                  key: POSTGRES_HOST
             # References the vars above via $(VAR) — same idea as string
             # interpolation, resolved by Kubernetes before the container starts.
+            # sslmode=require -- Azure Database for PostgreSQL mandates SSL.
             - name: DATABASE_URL
-              value: "postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@db:5432/$(POSTGRES_DB)"
+              value: "postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):5432/$(POSTGRES_DB)?sslmode=require"
             - name: SECRET_KEY
               valueFrom:
                 secretKeyRef:
