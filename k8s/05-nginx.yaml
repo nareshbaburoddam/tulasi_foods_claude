@@ -26,7 +26,7 @@ spec:
                 topologyKey: kubernetes.io/hostname
       containers:
         - name: nginx
-          image: ghcr.io/nareshbaburoddam/tulasi-frontend:1.0.0
+          image: ghcr.io/nareshbaburoddam/tulasi-frontend:1.0.2.1
           ports:
             - containerPort: 80
           resources:
