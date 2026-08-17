@@ -1,0 +1,67 @@
+name: CI - Backend (GHCR)
+
+on:
+  workflow_dispatch:
+    inputs:
+      major:
+        description: 'Major version'
+        required: true
+        default: '1'
+      minor:
+        description: 'Minor version'
+        required: true
+        default: '0'
+      patch:
+        description: 'Patch version'
+        required: true
+        default: '0'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository_owner }}/tulasi-backend
+  MANIFEST_PATH: k8s/03-backend.yaml
+  VERSION: "${{ github.event.inputs.major }}.${{ github.event.inputs.minor }}.${{ github.event.inputs.patch }}.${{ github.run_number }}"
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  build-and-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+
+      - name: Update image tag in manifest
+        run: |
+          sed -i -E "s#(image:\s*${REGISTRY}/${IMAGE_NAME}:).*#\1${{ env.VERSION }}#" "${MANIFEST_PATH}"
+          echo "Updated manifest:"
+          grep "image:" "${MANIFEST_PATH}"
+
+      - name: Commit and push manifest change
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "${MANIFEST_PATH}"
+          git diff --staged --quiet && echo "No changes to commit" && exit 0
+          git commit -m "ci: update backend image to ${{ env.VERSION }} [skip ci]"
+          git push
