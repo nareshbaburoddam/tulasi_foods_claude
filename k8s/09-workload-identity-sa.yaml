@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tulasi-backend-sa
+  namespace: tulasi-foods
+  annotations:
+    # Replace with the clientId printed by setup-workload-identity.sh
+    azure.workload.identity/client-id: "d2fb4f8b-d0a2-44b8-a0f4-449448c25075"
