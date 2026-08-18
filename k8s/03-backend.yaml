@@ -85,6 +85,11 @@ spec:
                   key: ADMIN_PASSWORD
             - name: ALLOWED_ORIGIN
               value: "https://chaats.nareshroddam.in"
+            - name: APPLICATIONINSIGHTS_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: tulasi-secrets
+                  key: APPLICATIONINSIGHTS_CONNECTION_STRING
           readinessProbe:
             httpGet:
               path: /health
