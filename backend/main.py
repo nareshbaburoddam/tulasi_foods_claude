@@ -1,4 +1,9 @@
+from azure.monitor.opentelemetry import configure_azure_monitor
 import os
+
+configure_azure_monitor(
+    connection_string=os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING")
+)
 import json
 import secrets
 from typing import List, Optional, Any, Union
