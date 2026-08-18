@@ -37,11 +37,11 @@ spec:
             - containerPort: 8000
           resources:
             requests:
-              cpu: "100m"
-              memory: "128Mi"
+              cpu: "50m"
+              memory: "68Mi"
             limits:
-              cpu: "500m"
-              memory: "256Mi"
+              cpu: "300m"
+              memory: "128Mi"
           env:
             - name: POSTGRES_USER
               valueFrom:
