@@ -4,6 +4,11 @@ metadata:
   name: backend
   namespace: tulasi-foods
 spec:
+  strategy:
+    rollingUpdate:
+      maxSurge: 0        # never create a NEW pod before an OLD one is gone
+      maxUnavailable: 1   # replace one pod at a time
+    type: RollingUpdate
   # No "replicas:" here on purpose -- backend-hpa now owns this field.
   # If we kept replicas:2 in git, ArgoCD's selfHeal would keep fighting
   # HPA's scaling decisions every time it synced.
@@ -37,11 +42,11 @@ spec:
             - containerPort: 8000
           resources:
             requests:
-              cpu: "50m"
-              memory: "68Mi"
-            limits:
-              cpu: "300m"
+              cpu: "100m"
               memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
           env:
             - name: POSTGRES_USER
               valueFrom:
