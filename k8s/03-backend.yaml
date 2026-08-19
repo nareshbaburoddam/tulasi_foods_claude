@@ -95,6 +95,11 @@ spec:
                 secretKeyRef:
                   name: tulasi-secrets
                   key: APPLICATIONINSIGHTS_CONNECTION_STRING
+            - name: TEST_DUMMY_VALUE
+              valueFrom:
+                secretKeyRef:
+                  name: tulasi-secrets
+                  key: TEST_DUMMY_VALUE
           readinessProbe:
             httpGet:
               path: /health
