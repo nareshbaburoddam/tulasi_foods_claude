@@ -9,3 +9,4 @@ python-multipart
 pydantic
 azure-monitor-opentelemetry
 opentelemetry-instrumentation-fastapi
+prometheus-fastapi-instrumentator
