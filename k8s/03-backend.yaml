@@ -37,7 +37,7 @@ spec:
                 topologyKey: kubernetes.io/hostname
       containers:
         - name: backend
-          image: ghcr.io/nareshbaburoddam/tulasi-backend:1.4.0.9
+          image: ghcr.io/nareshbaburoddam/tulasi-backend:1.5.1.10
           ports:
             - containerPort: 8000
           resources:
