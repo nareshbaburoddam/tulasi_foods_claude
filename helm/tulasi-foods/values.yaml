@@ -21,6 +21,16 @@ backend:
     limits:
       cpu: 200m
       memory: 128Mi
+backend:
+  strategy:
+    maxSurge: 0
+    maxUnavailable: 1
+
+frontend:
+  strategy:
+    maxSurge: 0
+    maxUnavailable: 1
+
 hpa:
   minReplicas: 1
   maxReplicas: 2

@@ -6,8 +6,8 @@ metadata:
 spec:
   strategy:
     rollingUpdate:
-      maxSurge: 0        # never create a NEW pod before an OLD one is gone
-      maxUnavailable: 1   # replace one pod at a time
+      maxSurge: {{ .Values.backend.strategy.maxSurge }}        # never create a NEW pod before an OLD one is gone
+      maxUnavailable: {{ .Values.backend.strategy.maxUnavailable }}   # replace one pod at a time
     type: RollingUpdate
   # No "replicas:" here on purpose -- backend-hpa now owns this field.
   # If we kept replicas:2 in git, ArgoCD's selfHeal would keep fighting
