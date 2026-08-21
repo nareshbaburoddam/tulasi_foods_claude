@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  namespace: {{ .Values.namespace }}
+spec:
+  # No "type:" specified -> defaults to ClusterIP now. The Azure App Routing
+  # Ingress is the only thing exposed to the internet; this Service is only
+  # reachable from inside the cluster (by the Ingress Controller itself).
+  selector:
+    app: nginx
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80

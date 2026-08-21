@@ -1,0 +1,77 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-conf
+  namespace: {{ .Values.namespace }}
+data:
+  tulasi.conf: |
+    # --- Rate limiting zones ---
+    limit_req_zone $binary_remote_addr zone=orders_limit:10m rate=5r/m;
+    limit_req_zone $binary_remote_addr zone=general_limit:10m rate=30r/s;
+    limit_conn_zone $binary_remote_addr zone=addr_conn:10m;
+    limit_req_status 429;
+    limit_conn_status 429;
+
+    server {
+        # TLS now terminates at the Azure App Routing Ingress, not here --
+        # this pod only ever receives plain HTTP from the Ingress Controller.
+        listen 80;
+        server_name chaats.nareshroddam.in;
+
+        root /usr/share/nginx/html;
+        index index.html;
+
+        limit_conn addr_conn 20;
+
+        gzip on;
+        gzip_types text/plain text/css application/json application/javascript text/xml application/xml text/html;
+        gzip_min_length 512;
+        gzip_comp_level 5;
+
+        location /images/ {
+            alias /usr/share/nginx/html/images/;
+            expires 30d;
+            add_header Cache-Control "public, immutable";
+        }
+
+        location / {
+            limit_req zone=general_limit burst=20 nodelay;
+            try_files $uri $uri/ /index.html;
+            add_header Cache-Control "public, max-age=300, must-revalidate";
+        }
+
+        location /admin {
+            limit_req zone=general_limit burst=20 nodelay;
+            try_files $uri $uri/ /admin.html;
+            add_header Cache-Control "no-store";
+        }
+
+        location /api/orders {
+            limit_req zone=orders_limit burst=3 nodelay;
+            proxy_pass http://backend:8000/api/orders;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            add_header Cache-Control "no-store";
+        }
+
+        location /api/ {
+            limit_req zone=general_limit burst=20 nodelay;
+            proxy_pass http://backend:8000/api/;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            add_header Cache-Control "no-store";
+        }
+
+        location ~ (\.bkp|\.bak|\.old|~)$ {
+            deny all;
+            return 404;
+        }
+        location ~ /\. {
+            deny all;
+            return 404;
+        }
+    }

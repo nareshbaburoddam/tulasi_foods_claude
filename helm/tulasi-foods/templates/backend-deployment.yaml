@@ -1,0 +1,119 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: {{ .Values.namespace }}
+spec:
+  strategy:
+    rollingUpdate:
+      maxSurge: 0        # never create a NEW pod before an OLD one is gone
+      maxUnavailable: 1   # replace one pod at a time
+    type: RollingUpdate
+  # No "replicas:" here on purpose -- backend-hpa now owns this field.
+  # If we kept replicas:2 in git, ArgoCD's selfHeal would keep fighting
+  # HPA's scaling decisions every time it synced.
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+        azure.workload.identity/use: "true"
+    spec:
+      serviceAccountName: {{ .Values.serviceAccountName }}
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecret }}
+      # Actively prefer spreading the 2 replicas across different nodes,
+      # so losing one node doesn't take down both backend pods at once.
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: backend
+                topologyKey: kubernetes.io/hostname
+      containers:
+        - name: backend
+          image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+          ports:
+            - containerPort: 8000
+          resources:
+          {{- toYaml .Values.backend.resources | nindent 12 }}
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: tulasi-secrets
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: tulasi-secrets
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: tulasi-secrets
+                  key: POSTGRES_DB
+            - name: POSTGRES_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: tulasi-secrets
+                  key: POSTGRES_HOST
+            # References the vars above via $(VAR) — same idea as string
+            # interpolation, resolved by Kubernetes before the container starts.
+            # sslmode=require -- Azure Database for PostgreSQL mandates SSL.
+            - name: DATABASE_URL
+              value: "postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):5432/$(POSTGRES_DB)?sslmode=require"
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: tulasi-secrets
+                  key: SECRET_KEY
+            - name: ADMIN_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: tulasi-secrets
+                  key: ADMIN_USERNAME
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: tulasi-secrets
+                  key: ADMIN_PASSWORD
+            - name: ALLOWED_ORIGIN
+              value: "{{ .Values.allowedOrigin }}"
+            - name: APPLICATIONINSIGHTS_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: tulasi-secrets
+                  key: APPLICATIONINSIGHTS_CONNECTION_STRING
+            - name: TEST_DUMMY_VALUE
+              valueFrom:
+                secretKeyRef:
+                  name: tulasi-secrets
+                  key: TEST_DUMMY_VALUE
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: tulasi-secrets
+                  key: OTEL_SERVICE_NAME
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          volumeMounts:
+            - name: kv-secrets
+              mountPath: /mnt/kv-secrets
+              readOnly: true
+      volumes:
+        - name: kv-secrets
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: {{ .Values.secretProviderClass }}

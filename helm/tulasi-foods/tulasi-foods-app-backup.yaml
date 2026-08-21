@@ -17,7 +17,7 @@ spec:
 
   syncPolicy:
     automated:
-      prune: false      # deletes cluster resources that got removed from git
-      selfHeal: false     # if someone manually kubectl-edits something, ArgoCD reverts it
+      prune: true       # deletes cluster resources that got removed from git
+      selfHeal: false    # if someone manually kubectl-edits something, ArgoCD reverts it
     syncOptions:
       - CreateNamespace=true

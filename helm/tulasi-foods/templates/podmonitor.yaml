@@ -1,0 +1,15 @@
+apiVersion: azmonitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: backend-podmonitor
+  namespace: {{ .Values.namespace }}
+
+spec:
+  selector:
+    matchLabels:
+      app: backend
+
+  podMetricsEndpoints:
+  - targetPort: 8000
+    path: /metrics
+    interval: 30s

@@ -1,0 +1,23 @@
+namespace: tulasi-foods
+
+serviceAccountName: tulasi-backend-sa
+
+imagePullSecret: ghcr-pull-secret
+
+secretProviderClass: tulasi-kv-secrets
+
+allowedOrigin: https://chaats.nareshroddam.in
+
+backend:
+  image:
+    repository: ghcr.io/nareshbaburoddam/tulasi-backend
+    tag: "1.5.1.10"
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+
+    limits:
+      cpu: 200m
+      memory: 128Mi
