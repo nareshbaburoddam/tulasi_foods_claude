@@ -8,16 +8,13 @@ spec:
 
   source:
     repoURL: https://github.com/nareshbaburoddam/tulasi_foods_claude.git
-    targetRevision: main
-    path: k8s
+    targetRevision: dev
+    path: helm/tulasi-foods
 
   destination:
     server: https://kubernetes.default.svc
     namespace: tulasi-foods
 
   syncPolicy:
-    automated:
-      prune: true       # deletes cluster resources that got removed from git
-      selfHeal: false    # if someone manually kubectl-edits something, ArgoCD reverts it
     syncOptions:
       - CreateNamespace=true
