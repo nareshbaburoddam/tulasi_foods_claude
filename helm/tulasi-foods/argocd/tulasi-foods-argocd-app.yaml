@@ -10,6 +10,9 @@ spec:
     repoURL: https://github.com/nareshbaburoddam/tulasi_foods_claude.git
     targetRevision: dev
     path: helm/tulasi-foods
+  helm:
+    valueFiles:
+      - values.yaml
 
   destination:
     server: https://kubernetes.default.svc
