@@ -21,12 +21,6 @@ backend:
     limits:
       cpu: 200m
       memory: 128Mi
-backend:
-  strategy:
-    maxSurge: 0
-    maxUnavailable: 1
-
-frontend:
   strategy:
     maxSurge: 0
     maxUnavailable: 1
@@ -51,6 +45,9 @@ frontend:
     limits:
       cpu: 200m
       memory: 128Mi
+  strategy:
+    maxSurge: 0
+    maxUnavailable: 1
 ingress:
   host: chaats.nareshroddam.in
   tlsSecret: tulasi-tls
