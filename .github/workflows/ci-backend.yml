@@ -64,6 +64,15 @@ jobs:
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
 
+      - name: Select values file
+        run: |
+          if [ "${{ github.event.inputs.environment }}" = "prod" ]; then
+            echo "MANIFEST_PATH=helm/tulasi-foods/values-prod.yaml" >> $GITHUB_ENV
+          else
+            echo "MANIFEST_PATH=helm/tulasi-foods/values-dev.yaml" >> $GITHUB_ENV
+          fi
+          echo "Using: $MANIFEST_PATH"
+
       - name: Install yq
         run: |
           sudo wget -qO /usr/local/bin/yq \
