@@ -1,7 +1,7 @@
 # Tulasi Foods — Fixed Backend & Deployment
 
 ## What was fixed
-
+## test ##
 1. **Real authentication.** Passwords are hashed with bcrypt (`passlib`), login issues a real signed JWT (`python-jose`), and every admin endpoint (`/api/requests` write/delete, `/api/users`) now verifies that token via a FastAPI dependency. Previously, any username accepted the hardcoded password `Admin@1234` or `admin123_change_me`, and no endpoint checked the token at all.
 2. **No more password reset on every restart.** The old code overwrote the admin password back to `Admin@1234` on every container start. Now, an admin is seeded **once** — only if zero users exist — using `ADMIN_PASSWORD` from your `.env`, or a random password printed to the logs one time if you don't set one.
 3. **Role enforcement.** `readonly` users can log in and view data, but the backend now actually blocks them from editing/deleting requests or managing users (previously this was only hidden in the UI, not enforced server-side).
