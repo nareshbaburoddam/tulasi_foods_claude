@@ -5,6 +5,11 @@ metadata:
   namespace: {{ .Values.namespace }}
 spec:
   #replicas: 2
+  strategy:
+    rollingUpdate:
+      maxSurge: {{ .Values.frontend.strategy.maxSurge }}        # never create a NEW pod before an OLD one is gone
+      maxUnavailable: {{ .Values.frontend.strategy.maxUnavailable }}   # replace one pod at a time
+    type: RollingUpdate
   selector:
     matchLabels:
       app: nginx
