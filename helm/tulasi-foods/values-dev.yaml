@@ -1,59 +1,50 @@
 namespace: tulasi-foods
-
 serviceAccountName: tulasi-backend-sa
-
 imagePullSecret: ghcr-pull-secret
-
 secretProviderClass: tulasi-kv-secrets
-
 allowedOrigin: https://chaats.nareshroddam.in
-
 backend:
   image:
     repository: ghcr.io/nareshbaburoddam/tulasi-backend
-    tag: "1.5.1.10"
-
+    tag: "1.1.1.11"
   resources:
     requests:
       cpu: 50m
       memory: 64Mi
-
     limits:
       cpu: 200m
       memory: 128Mi
+  strategy:
+    maxSurge: 0
+    maxUnavailable: 1
 hpa:
   minReplicas: 1
   maxReplicas: 2
-
 podMonitor:
   enabled: true
-
 frontend:
   image:
     repository: ghcr.io/nareshbaburoddam/tulasi-frontend
     tag: "1.0.2.1"
-
   resources:
     requests:
       cpu: 50m
       memory: 64Mi
-
     limits:
       cpu: 200m
       memory: 128Mi
+  strategy:
+    maxSurge: 0
+    maxUnavailable: 1
 ingress:
   host: chaats.nareshroddam.in
   tlsSecret: tulasi-tls
-
 workloadIdentity:
   clientId: "d2fb4f8b-d0a2-44b8-a0f4-449448c25075"
-
 azure:
   keyVaultName: "tulasi-kv-2026"
   tenantId: "e41f5746-929e-4d11-a6ab-d553e45ed8c3"
-
 hpa:
   minReplicas: 1
   maxReplicas: 2
   cpuTargetUtilization: 70
-

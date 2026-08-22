@@ -15,11 +15,18 @@ on:
         description: 'Patch version'
         required: true
         default: '0'
-
+      environment:
+        description: 'Environment'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - qa
+          - prod
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository_owner }}/tulasi-frontend
-  MANIFEST_PATH: helm/tulasi-foods/values.yaml
   VERSION: "${{ github.event.inputs.major }}.${{ github.event.inputs.minor }}.${{ github.event.inputs.patch }}.${{ github.run_number }}"
 
 permissions:
@@ -29,6 +36,7 @@ permissions:
 jobs:
   build-and-update:
     runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
 
     steps:
       - name: Checkout code
@@ -53,6 +61,15 @@ jobs:
           push: true
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+
+      - name: Select values file
+        run: |
+          if [ "${{ github.event.inputs.environment }}" = "prod" ]; then
+            echo "MANIFEST_PATH=helm/tulasi-foods/values-prod.yaml" >> $GITHUB_ENV
+          else
+            echo "MANIFEST_PATH=helm/tulasi-foods/values-dev.yaml" >> $GITHUB_ENV
+          fi
+          echo "Using: $MANIFEST_PATH"
 
       - name: Install yq
         run: |
