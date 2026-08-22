@@ -28,7 +28,6 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository_owner }}/tulasi-backend
-  MANIFEST_PATH: helm/tulasi-foods/values.yaml
   VERSION: "${{ github.event.inputs.major }}.${{ github.event.inputs.minor }}.${{ github.event.inputs.patch }}.${{ github.run_number }}"
 
 permissions:
