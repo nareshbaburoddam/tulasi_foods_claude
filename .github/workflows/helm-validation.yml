@@ -1,0 +1,31 @@
+name: Helm Validation
+
+on:
+  pull_request:
+  push:
+    branches:
+      - dev
+      - main
+
+jobs:
+  helm:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v4
+
+      - name: Helm Lint
+        run: |
+          helm lint helm/tulasi-foods
+
+      - name: Helm Template
+        run: |
+          helm template tulasi-foods helm/tulasi-foods > rendered.yaml
+
+      - name: Validate Rendered Manifest
+        run: |
+          test -s rendered.yaml
