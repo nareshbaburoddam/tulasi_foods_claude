@@ -1,12 +1,14 @@
+{{- if eq .Values.color "blue" }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: backend-{{ .Values.color }}
+  name: backend-active
   namespace: {{ .Values.namespace }}
 spec:
   selector:
     app: backend
-    version: {{ .Values.color }}
+    version: {{ .Values.activeColor }}
   ports:
     - port: 8000
       targetPort: 8000
+{{- end }}

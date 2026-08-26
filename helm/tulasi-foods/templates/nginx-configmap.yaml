@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: nginx-conf
+  name: nginx-conf-{{ .Values.color }}
   namespace: {{ .Values.namespace }}
 data:
   tulasi.conf: |
@@ -16,7 +16,7 @@ data:
         # TLS now terminates at the Azure App Routing Ingress, not here --
         # this pod only ever receives plain HTTP from the Ingress Controller.
         listen 80;
-        server_name chaats.nareshroddam.in;
+        server_name {{ .Values.ingress.host }};
 
         root /usr/share/nginx/html;
         index index.html;
@@ -48,7 +48,7 @@ data:
 
         location /api/orders {
             limit_req zone=orders_limit burst=3 nodelay;
-            proxy_pass http://backend:8000/api/orders;
+            proxy_pass http://backend-active:8000/api/orders;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -58,7 +58,7 @@ data:
 
         location /api/ {
             limit_req zone=general_limit burst=20 nodelay;
-            proxy_pass http://backend:8000/api/;
+            proxy_pass http://backend-active:8000/api/;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

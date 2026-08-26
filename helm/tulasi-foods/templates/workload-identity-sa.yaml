@@ -1,3 +1,4 @@
+{{- if eq .Values.color "blue" }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -5,3 +6,4 @@ metadata:
   namespace: {{ .Values.namespace }}
   annotations:
     azure.workload.identity/client-id: "{{ .Values.workloadIdentity.clientId }}"
+{{- end }}
