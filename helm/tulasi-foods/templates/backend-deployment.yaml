@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend
+  name: backend-{{ .Values.color }}
   namespace: {{ .Values.namespace }}
 spec:
   strategy:
@@ -15,10 +15,12 @@ spec:
   selector:
     matchLabels:
       app: backend
+      version: {{ .Values.color }}
   template:
     metadata:
       labels:
         app: backend
+        version: {{ .Values.color }}
         azure.workload.identity/use: "true"
     spec:
       serviceAccountName: {{ .Values.serviceAccountName }}

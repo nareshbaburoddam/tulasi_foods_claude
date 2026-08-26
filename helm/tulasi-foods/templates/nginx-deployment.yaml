@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx
+  name: nginx-{{ .Values.color }}
   namespace: {{ .Values.namespace }}
 spec:
   #replicas: 2
@@ -13,10 +13,12 @@ spec:
   selector:
     matchLabels:
       app: nginx
+      version: {{ .Values.color }}
   template:
     metadata:
       labels:
         app: nginx
+        version: {{ .Values.color }}
     spec:
       imagePullSecrets:
         - name: ghcr-pull-secret
@@ -43,5 +45,5 @@ spec:
       volumes:
         - name: nginx-conf
           configMap:
-            name: nginx-conf
+            name: nginx-conf-{{ .Values.color }}
 

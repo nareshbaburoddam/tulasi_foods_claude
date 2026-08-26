@@ -1,0 +1,8 @@
+{
+  "name": "bluegreen-backend-federated-cred",
+  "issuer": "https://centralindia.oic.prod-aks.azure.com/e41f5746-929e-4d11-a6ab-d553e45ed8c3/b78014e0-f89a-4110-97a7-2f0418061ff8/",
+  "subject": "system:serviceaccount:bluegreen-lab:tulasi-backend-sa",
+  "audiences": [
+    "api://AzureADTokenExchange"
+  ]
+}
