@@ -1,4 +1,4 @@
-namespace: bluegreen-lab
+namespace: terraform-aks-qa
 color: blue
 activeColor: blue
 serviceAccountName: tulasi-backend-sa

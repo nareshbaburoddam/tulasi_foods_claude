@@ -1,4 +1,4 @@
-namespace: tulasi-foods
+namespace: terraform-aks-qa
 serviceAccountName: tulasi-backend-sa
 imagePullSecret: ghcr-pull-secret
 secretProviderClass: tulasi-kv-secrets
@@ -21,7 +21,7 @@ hpa:
   minReplicas: 1
   maxReplicas: 2
 podMonitor:
-  enabled: true
+  enabled: false
 frontend:
   image:
     repository: ghcr.io/nareshbaburoddam/tulasi-frontend
