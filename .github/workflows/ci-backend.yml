@@ -24,6 +24,7 @@ on:
           - dev
           - qa
           - prod
+          - others
 
 env:
   REGISTRY: ghcr.io
