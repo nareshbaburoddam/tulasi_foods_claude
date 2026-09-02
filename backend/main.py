@@ -29,10 +29,12 @@ Base.metadata.create_all(bind=engine)
 # FastAPI Application
 # ------------------------------------------------------------------------------
 app = FastAPI(title="Tulasi Foods API")
-FastAPIInstrumentor.instrument_app(app)
-Instrumentator().instrument(app).expose(app)
 
-ALLOWED_ORIGIN = os.getenv("ALLOWED_ORIGIN", "https://bluegreen.nareshroddam.in")
+##ALLOWED_ORIGIN = os.getenv("ALLOWED_ORIGIN", "https://bluegreen.nareshroddam.in")
+ALLOWED_ORIGIN = os.getenv(
+    "ALLOWED_ORIGIN",
+    "https://bluegreen.nareshroddam.in"
+)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[ALLOWED_ORIGIN],
