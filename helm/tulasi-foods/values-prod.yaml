@@ -8,7 +8,7 @@ allowedOrigin: https://bluegreen.nareshroddam.in
 backend:
   image:
     repository: ghcr.io/nareshbaburoddam/tulasi-backend
-    tag: "1.0.0.16"
+    tag: "1.0.0.17"
   resources:
     requests:
       cpu: 50m
