@@ -4,6 +4,4 @@ kind: ServiceAccount
 metadata:
   name: {{ .Values.serviceAccountName }}
   namespace: {{ .Values.namespace }}
-  annotations:
-    azure.workload.identity/client-id: "{{ .Values.workloadIdentity.clientId }}"
 {{- end }}

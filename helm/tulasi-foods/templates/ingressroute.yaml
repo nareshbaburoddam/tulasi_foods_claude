@@ -1,0 +1,20 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: tulasi
+  namespace: tulasi
+
+spec:
+  entryPoints:
+    - web
+    - websecure
+
+  routes:
+    - match: Host(`bluegreen.nareshroddam.in`)
+      kind: Rule
+      services:
+        - name: nginx-blue
+          port: 80
+
+  tls:
+    secretName: tulasi-tls

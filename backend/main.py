@@ -1,11 +1,4 @@
-from azure.monitor.opentelemetry import configure_azure_monitor
-from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-from prometheus_fastapi_instrumentator import Instrumentator
 import os
-
-configure_azure_monitor(
-    connection_string=os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING")
-)
 import json
 import secrets
 from typing import List, Optional, Any, Union
@@ -39,7 +32,7 @@ app = FastAPI(title="Tulasi Foods API")
 FastAPIInstrumentor.instrument_app(app)
 Instrumentator().instrument(app).expose(app)
 
-ALLOWED_ORIGIN = os.getenv("ALLOWED_ORIGIN", "https://chaats.nareshroddam.in")
+ALLOWED_ORIGIN = os.getenv("ALLOWED_ORIGIN", "https://bluegreen.nareshroddam.in")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[ALLOWED_ORIGIN],
