@@ -1,12 +1,14 @@
-namespace: terraform-aks-qa
-serviceAccountName: tulasi-backend-sa
+namespace: tulasi
+color: blue
+activeColor: blue
+serviceAccountName: tulasi-backed-sa
 imagePullSecret: ghcr-pull-secret
 secretProviderClass: tulasi-kv-secrets
-allowedOrigin: https://chaats.nareshroddam.in
+allowedOrigin: https://bluegreen.nareshroddam.in
 backend:
   image:
     repository: ghcr.io/nareshbaburoddam/tulasi-backend
-    tag: "1.0.0.12"
+    tag: "1.0.1"
   resources:
     requests:
       cpu: 50m
@@ -25,7 +27,7 @@ podMonitor:
 frontend:
   image:
     repository: ghcr.io/nareshbaburoddam/tulasi-frontend
-    tag: "1.0.2.1"
+    tag: "1.0.0.2"
   resources:
     requests:
       cpu: 50m
@@ -37,13 +39,8 @@ frontend:
     maxSurge: 0
     maxUnavailable: 1
 ingress:
-  host: chaats.nareshroddam.in
+  host: bluegreen.nareshroddam.in
   tlsSecret: tulasi-tls
-workloadIdentity:
-  clientId: "41d30759-c535-405c-8b45-baf1dac6b5ce"
-azure:
-  keyVaultName: "tulasi-kv-2026"
-  tenantId: "e41f5746-929e-4d11-a6ab-d553e45ed8c3"
 hpa:
   minReplicas: 1
   maxReplicas: 2
