@@ -1,0 +1,16 @@
+apiVersion: traefik.io/v1alpha1
+kind: TraefikService
+metadata:
+  name: nginx-wrr
+  namespace: {{ .Values.namespace }}
+spec:
+  weighted:
+    services:
+      - name: nginx-{{ .Values.color }}
+        port: 80
+        weight: {{ .Values.traffic.stableWeight }}
+      {{- if .Values.canary.enabled }}
+      - name: nginx-canary
+        port: 80
+        weight: {{ .Values.traffic.canaryWeight }}
+      {{- end }}
