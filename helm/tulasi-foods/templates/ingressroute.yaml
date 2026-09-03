@@ -13,8 +13,8 @@ spec:
     - match: Host(`{{ .Values.ingress.host }}`)
       kind: Rule
       services:
-        - name: nginx-wrr
-          kind: TraefikService
+        - name: nginx-{{ .Values.activeColor }}
+          port: 80
 
   tls:
     secretName: {{ .Values.ingress.tlsSecret }}

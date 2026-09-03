@@ -1,16 +1,19 @@
+{{- range $color := list "blue" "green" }}
+{{- $colorConfig := index $.Values.frontend $color }}
+{{- if $colorConfig.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: nginx-{{ .Values.color }}
-  namespace: {{ .Values.namespace }}
+  name: nginx-{{ $color }}
+  namespace: {{ $.Values.namespace }}
 spec:
-  # No "type:" specified -> defaults to ClusterIP now. The Azure App Routing
-  # Ingress is the only thing exposed to the internet; this Service is only
-  # reachable from inside the cluster (by the Ingress Controller itself).
   selector:
     app: nginx
-    version: {{ .Values.color }}
+    version: {{ $color }}
   ports:
     - name: http
       port: 80
       targetPort: 80
+---
+{{- end }}
+{{- end }}

@@ -1,43 +1,37 @@
+{{- range $color := list "blue" "green" }}
+{{- $colorConfig := index $.Values.frontend $color }}
+{{- if $colorConfig.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-{{ .Values.color }}
-  namespace: {{ .Values.namespace }}
+  name: nginx-{{ $color }}
+  namespace: {{ $.Values.namespace }}
 spec:
-  #replicas: 2
+  replicas: {{ $colorConfig.replicas | default 1 }}
   strategy:
-    rollingUpdate:
-      maxSurge: {{ .Values.frontend.strategy.maxSurge }}        # never create a NEW pod before an OLD one is gone
-      maxUnavailable: {{ .Values.frontend.strategy.maxUnavailable }}   # replace one pod at a time
     type: RollingUpdate
+    rollingUpdate:
+      maxSurge: {{ $.Values.frontend.strategy.maxSurge }}
+      maxUnavailable: {{ $.Values.frontend.strategy.maxUnavailable }}
   selector:
     matchLabels:
       app: nginx
-      version: {{ .Values.color }}
+      version: {{ $color }}
   template:
     metadata:
       labels:
         app: nginx
-        version: {{ .Values.color }}
+        version: {{ $color }}
     spec:
       imagePullSecrets:
-        - name: ghcr-pull-secret
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              podAffinityTerm:
-                labelSelector:
-                  matchLabels:
-                    app: nginx
-                topologyKey: kubernetes.io/hostname
+        - name: {{ $.Values.imagePullSecret }}
       containers:
         - name: nginx
-          image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
+          image: "{{ $colorConfig.image.repository }}:{{ $colorConfig.image.tag }}"
           ports:
             - containerPort: 80
           resources:
-          {{- toYaml .Values.frontend.resources | nindent 12 }}
+            {{- toYaml $.Values.frontend.resources | nindent 12 }}
           volumeMounts:
             - name: nginx-conf
               mountPath: /etc/nginx/conf.d/tulasi.conf
@@ -45,5 +39,7 @@ spec:
       volumes:
         - name: nginx-conf
           configMap:
-            name: nginx-conf-{{ .Values.color }}
-
+            name: nginx-conf-blue
+---
+{{- end }}
+{{- end }}
