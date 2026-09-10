@@ -1,6 +1,6 @@
 namespace: tulasi
 color: blue
-activeColor: green
+activeColor: blue
 serviceAccountName: tulasi-backed-sa
 imagePullSecret: ghcr-pull-secret
 secretProviderClass: tulasi-kv-secrets
@@ -38,15 +38,15 @@ frontend:
 
   # Stable Production (Currently serving 100% traffic via activeColor: blue)
   blue:
-    enabled: false
+    enabled: true
     replicas: 1
     image:
       repository: ghcr.io/nareshbaburoddam/tulasi-frontend
-      tag: "1.0.0.5"
+      tag: "1.0.0.6"
 
   # Standby Release (Testing version 1.0.0.6 before traffic cutover)
   green:
-    enabled: true
+    enabled: false
     replicas: 1
     image:
       repository: ghcr.io/nareshbaburoddam/tulasi-frontend
