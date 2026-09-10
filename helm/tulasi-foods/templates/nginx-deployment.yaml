@@ -39,7 +39,7 @@ spec:
       volumes:
         - name: nginx-conf
           configMap:
-            name: nginx-conf-blue
+            name: nginx-conf-{{ $color }}
 ---
 {{- end }}
 {{- end }}

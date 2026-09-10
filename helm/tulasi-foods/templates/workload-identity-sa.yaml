@@ -1,7 +1,5 @@
-{{- if eq .Values.color "blue" }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: {{ .Values.serviceAccountName }}
   namespace: {{ .Values.namespace }}
-{{- end }}

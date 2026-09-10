@@ -13,10 +13,12 @@ data:
     limit_conn_status 429;
 
     server {
-        # TLS now terminates at the Azure App Routing Ingress, not here --
-        # this pod only ever receives plain HTTP from the Ingress Controller.
         listen 80;
         server_name {{ .Values.ingress.host }};
+
+        # Dynamic DNS resolution via kube-dns to avoid caching stale ClusterIPs
+        resolver kube-dns.kube-system.svc.cluster.local valid=10s ipv6=off;
+        set $backend_upstream http://backend-active.{{ .Values.namespace }}.svc.cluster.local:8000;
 
         root /usr/share/nginx/html;
         index index.html;
@@ -48,7 +50,7 @@ data:
 
         location /api/orders {
             limit_req zone=orders_limit burst=3 nodelay;
-            proxy_pass http://backend-active:8000/api/orders;
+            proxy_pass $backend_upstream/api/orders;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -58,7 +60,7 @@ data:
 
         location /api/ {
             limit_req zone=general_limit burst=20 nodelay;
-            proxy_pass http://backend-active:8000/api/;
+            proxy_pass $backend_upstream/api/;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -70,6 +72,7 @@ data:
             deny all;
             return 404;
         }
+
         location ~ /\. {
             deny all;
             return 404;
