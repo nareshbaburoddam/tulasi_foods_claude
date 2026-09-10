@@ -57,7 +57,7 @@ ingress:
   tlsSecret: tulasi-tls
 
 hpa:
-  minReplicas: 3
+  minReplicas: 4
   maxReplicas: 5
   cpuTargetUtilization: 70
 canary:
