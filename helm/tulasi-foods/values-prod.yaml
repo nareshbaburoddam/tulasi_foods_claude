@@ -50,7 +50,7 @@ frontend:
     replicas: 1
     image:
       repository: ghcr.io/nareshbaburoddam/tulasi-frontend
-      tag: "1.0.0.6"
+      tag: "1.0.0.5"
 
 ingress:
   host: bluegreen.nareshroddam.in
