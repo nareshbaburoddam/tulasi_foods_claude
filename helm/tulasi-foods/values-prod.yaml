@@ -58,9 +58,8 @@ ingress:
 
 hpa:
   minReplicas: 1
-  maxReplicas: 2
+  maxReplicas: 5
   cpuTargetUtilization: 70
-<<<<<<< HEAD
 canary:
   enabled: false
   replicas: 1
@@ -70,8 +69,6 @@ canary:
 traffic:
   stableWeight: 100
   canaryWeight: 0
-=======
 
 podMonitor:
   enabled: false
->>>>>>> ae93fe3 (bluegreen)

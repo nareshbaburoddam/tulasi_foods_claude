@@ -3,25 +3,28 @@ kind: Application
 metadata:
   name: tulasi-foods
   namespace: argocd
-
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
 
   source:
     repoURL: https://github.com/nareshbaburoddam/tulasi_foods_claude.git
-    targetRevision: dev
+    targetRevision: gcp
     path: helm/tulasi-foods
-
     helm:
       valueFiles:
-        - values-dev.yaml
         - values.yaml
         - values-prod.yaml
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: tulasi-foods
+    namespace: tulasi
 
   syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - RespectIgnoreDifferences=true

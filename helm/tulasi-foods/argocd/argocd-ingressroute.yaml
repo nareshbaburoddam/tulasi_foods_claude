@@ -1,0 +1,27 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: argocd-server
+  namespace: argocd
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    # 1. gRPC Traffic (Argo CD CLI)
+    - match: Host(`argocd.nareshroddam.in`) && Headers(`Content-Type`, `application/grpc`)
+      kind: Rule
+      priority: 20
+      services:
+        - name: argocd-server
+          port: 80
+          scheme: h2c
+    # 2. Web UI & WebSockets (Browser)
+    - match: Host(`argocd.nareshroddam.in`)
+      kind: Rule
+      priority: 10
+      services:
+        - name: argocd-server
+          port: 80
+          scheme: http
+  tls:
+    secretName: tulasi-tls
