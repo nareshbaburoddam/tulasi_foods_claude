@@ -1,0 +1,19 @@
+{{- range $color := list "blue" "green" }}
+{{- $colorConfig := index $.Values.frontend $color }}
+{{- if $colorConfig.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-{{ $color }}
+  namespace: {{ $.Values.namespace }}
+spec:
+  selector:
+    app: nginx
+    version: {{ $color }}
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+---
+{{- end }}
+{{- end }}
