@@ -12,7 +12,7 @@ spec:
       kind: Rule
       services:
         - name: nginx-active
-          kind: service
+          kind: Service
           port: 80
   tls:
     secretName: {{ .Values.ingress.tlsSecret }}
