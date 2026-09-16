@@ -1,0 +1,49 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: nginx-rollout
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.frontend.blue.replicas | default 2 }}
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/nginx-configmap.yaml") . | sha256sum }}
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecret }}
+      containers:
+        - name: nginx
+          image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
+          ports:
+            - containerPort: 80
+          resources:
+            {{- toYaml .Values.frontend.resources | nindent 12 }}
+          volumeMounts:
+            - name: nginx-conf
+              mountPath: /etc/nginx/conf.d/tulasi.conf
+              subPath: tulasi.conf
+      volumes:
+        - name: nginx-conf
+          configMap:
+            name: nginx-conf-{{ .Values.color }}
+  strategy:
+    canary:
+      stableService: nginx-stable
+      canaryService: nginx-canary
+      trafficRouting:
+        traefik:
+          weightedTraefikServiceName: nginx-wrr
+      steps:
+        - setWeight: 20
+        - pause: { duration: 1m }
+        - setWeight: 50
+        - pause: { duration: 2m }
+        - setWeight: 80
+        - pause: { duration: 1m }
