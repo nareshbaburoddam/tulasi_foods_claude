@@ -93,6 +93,12 @@ spec:
                   name: tulasi-secrets
                   key: ADMIN_PASSWORD
 
+            - name: TEST_SECRET_ENV
+              valueFrom:
+                secretKeyRef:
+                  name: tulasi-secrets
+                  key: TEST_SECRET_ENV
+
             - name: ALLOWED_ORIGIN
               value: "{{ .Values.allowedOrigin }}"
 
