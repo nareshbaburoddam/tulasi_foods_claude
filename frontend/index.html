@@ -16,6 +16,113 @@
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
     }
+
+    .hero-visual {
+      position: relative;
+      background: linear-gradient(180deg, rgba(251,191,36,0.25), rgba(15,23,42,0.15));
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 28px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.28);
+      overflow: hidden;
+    }
+
+    .hero-visual::before,
+    .hero-visual::after {
+      content: "";
+      position: absolute;
+      border-radius: 9999px;
+      filter: blur(8px);
+      opacity: 0.9;
+    }
+
+    .hero-visual::before {
+      width: 160px;
+      height: 160px;
+      background: rgba(251,191,36,0.25);
+      right: -20px;
+      top: -30px;
+    }
+
+    .hero-visual::after {
+      width: 200px;
+      height: 200px;
+      background: rgba(59,130,246,0.14);
+      left: -35px;
+      bottom: -40px;
+    }
+
+    .food-plate {
+      position: relative;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      margin: 0 auto;
+      background: radial-gradient(circle at center, #fffaf0 0%, #fef3c7 44%, #f59e0b 100%);
+      border: 10px solid rgba(255,255,255,0.7);
+      box-shadow: inset 0 10px 25px rgba(255,255,255,0.7), 0 25px 40px rgba(0,0,0,0.18);
+    }
+
+    .food-plate::before {
+      content: "";
+      position: absolute;
+      inset: 26px;
+      border-radius: 50%;
+      background: radial-gradient(circle at center, #fef3c7 0%, #fbbf24 52%, #eab308 100%);
+      border: 8px solid rgba(255,255,255,0.55);
+    }
+
+    .food-plate::after {
+      content: "";
+      position: absolute;
+      inset: 58px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.28);
+      box-shadow: 0 0 0 12px rgba(251,191,36,0.22);
+    }
+
+    .ingredient-pill {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 9999px;
+      padding: 8px 12px;
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 20px 30px rgba(0,0,0,0.12);
+    }
+
+    .ingredient-pill i {
+      color: #fbbf24;
+    }
+
+    .tint-1 { top: 18px; left: 16px; }
+    .tint-2 { right: 18px; top: 34px; }
+    .tint-3 { left: 20px; bottom: 20px; }
+    .tint-4 { right: 18px; bottom: 16px; }
+
+    .floating-stat {
+      position: absolute;
+      right: -8px;
+      bottom: 18px;
+      background: rgba(255,255,255,0.94);
+      color: #111827;
+      border-radius: 18px;
+      padding: 12px 14px;
+      box-shadow: 0 24px 40px rgba(0,0,0,0.14);
+      border: 1px solid rgba(15,23,42,0.06);
+    }
+
+    .floating-stat strong {
+      display: block;
+      font-size: 1.3rem;
+      line-height: 1.1;
+      color: #111827;
+    }
   </style>
 </head>
 <body class="bg-gray-50 text-gray-800 antialiased flex flex-col min-h-screen">
@@ -60,16 +167,36 @@
 
   <!-- Hero Section -->
   <section class="bg-slate-900 text-white py-16 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-4xl mx-auto text-center">
-      <h1 data-i18n="heroTitle" class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
-        Premium Pani Puri Supplies
-      </h1>
-      <p data-i18n="heroSubtitle" class="mt-4 text-base sm:text-lg text-slate-300 font-normal max-w-2xl mx-auto">
-        Your reliable business partner for high-quality wholesale chaat materials and exclusive franchise opportunities.
-      </p>
-      <div class="mt-8 flex justify-center gap-4">
-        <a href="#products" data-i18n="heroBtnMaterials" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-all">Order Materials</a>
-        <a href="#franchise" data-i18n="heroBtnFranchise" class="bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-lg border border-slate-700 transition-all">Explore Franchise</a>
+    <div class="max-w-6xl mx-auto grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+      <div class="text-center lg:text-left">
+        <div class="inline-flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-amber-300 mb-5">
+          <i class="fa-solid fa-seedling"></i>
+          Fresh • Authentic • Trusted
+        </div>
+        <h1 data-i18n="heroTitle" class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+          Premium Pani Puri Supplies
+        </h1>
+        <p data-i18n="heroSubtitle" class="mt-4 text-base sm:text-lg text-slate-300 font-normal max-w-2xl lg:max-w-xl">
+          Your reliable business partner for high-quality wholesale chaat materials and exclusive franchise opportunities.
+        </p>
+        <div class="mt-8 flex justify-center lg:justify-start gap-4">
+          <a href="#products" data-i18n="heroBtnMaterials" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-all">Order Materials</a>
+          <a href="#franchise" data-i18n="heroBtnFranchise" class="bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-lg border border-slate-700 transition-all">Explore Franchise</a>
+        </div>
+      </div>
+
+      <div class="hero-visual p-6 sm:p-8">
+        <div class="food-plate">
+          <div class="ingredient-pill tint-1"><i class="fa-solid fa-wheat-awn"></i> Puri</div>
+          <div class="ingredient-pill tint-2"><i class="fa-solid fa-pepper-hot"></i> Masala</div>
+          <div class="ingredient-pill tint-3"><i class="fa-solid fa-bowl-food"></i> Chatpata</div>
+          <div class="ingredient-pill tint-4"><i class="fa-solid fa-star"></i> Quality</div>
+        </div>
+
+        <div class="floating-stat">
+          <span class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Since</span>
+          <strong>2024</strong>
+        </div>
       </div>
     </div>
   </section>
@@ -282,7 +409,7 @@
           <button type="submit" data-i18n="btnSubmit" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-all text-base">Submit Request</button>
         </form>
 
-        <div id="statusMsg" class="mt-4 text-center text-sm font-semibold hidden"></div>
+        <div id="statusMsg" class="mt-4 text-center text-sm font-semibold hidden" aria-live="polite"></div>
       </div>
 
       <!-- Contact Details Banner -->
@@ -557,6 +684,65 @@
       });
     }
 
+    function setStatus(message, tone = 'neutral') {
+      const statusMsg = document.getElementById('statusMsg');
+      const tones = {
+        neutral: 'text-gray-700',
+        error: 'text-red-600',
+        success: 'text-green-600',
+        warning: 'text-amber-600'
+      };
+
+      statusMsg.innerText = message;
+      statusMsg.className = `mt-4 text-center text-sm font-semibold ${tones[tone] || tones.neutral}`;
+      statusMsg.classList.remove('hidden');
+    }
+
+    function validateRequestForm() {
+      const name = document.getElementById('customerName').value.trim();
+      const mobile = document.getElementById('mobileNumber').value.trim();
+      const location = document.getElementById('location').value.trim();
+      const fulfillmentRadio = document.querySelector('.fulfillment-radio:checked');
+      const scheduledDateVal = document.getElementById('scheduledDate').value;
+      const selectedBoxes = Array.from(document.querySelectorAll('.item-checkbox:checked'));
+
+      if (!name || name.length < 2) {
+        setStatus('Please enter your name.', 'error');
+        document.getElementById('customerName').focus();
+        return false;
+      }
+
+      const cleanedMobile = mobile.replace(/\D/g, '');
+      if (cleanedMobile.length !== 10) {
+        setStatus('Please enter a valid 10-digit mobile number.', 'error');
+        document.getElementById('mobileNumber').focus();
+        return false;
+      }
+
+      if (!location || location.length < 2) {
+        setStatus('Please enter your location.', 'error');
+        document.getElementById('location').focus();
+        return false;
+      }
+
+      if (!fulfillmentRadio) {
+        setStatus((translations[currentLang] || translations.en).msgSelectFulfillment, 'error');
+        return false;
+      }
+
+      if (!scheduledDateVal) {
+        setStatus((translations[currentLang] || translations.en).msgSelectDate, 'error');
+        return false;
+      }
+
+      if (selectedBoxes.length === 0) {
+        setStatus((translations[currentLang] || translations.en).msgSelectMaterial, 'error');
+        return false;
+      }
+
+      return true;
+    }
+
     document.querySelectorAll('.fulfillment-radio').forEach(radio => {
       radio.addEventListener('change', () => {
         const dict = translations[currentLang] || translations.en;
@@ -573,32 +759,16 @@
 
     document.getElementById('orderForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const statusMsg = document.getElementById('statusMsg');
       const dict = translations[currentLang] || translations.en;
+      const submitButton = e.target.querySelector('button[type="submit"]');
+
+      if (!validateRequestForm()) {
+        return;
+      }
 
       const selectedBoxes = Array.from(document.querySelectorAll('.item-checkbox:checked'));
-      if (selectedBoxes.length === 0) {
-        statusMsg.innerText = dict.msgSelectMaterial;
-        statusMsg.className = "mt-4 text-center text-sm font-semibold text-red-600";
-        statusMsg.classList.remove('hidden');
-        return;
-      }
-
       const fulfillmentRadio = document.querySelector('.fulfillment-radio:checked');
-      if (!fulfillmentRadio) {
-        statusMsg.innerText = dict.msgSelectFulfillment;
-        statusMsg.className = "mt-4 text-center text-sm font-semibold text-red-600";
-        statusMsg.classList.remove('hidden');
-        return;
-      }
-
       const scheduledDateVal = document.getElementById('scheduledDate').value;
-      if (!scheduledDateVal) {
-        statusMsg.innerText = dict.msgSelectDate;
-        statusMsg.className = "mt-4 text-center text-sm font-semibold text-red-600";
-        statusMsg.classList.remove('hidden');
-        return;
-      }
 
       const itemsList = selectedBoxes.map(cb => {
         const row = cb.closest('.item-row');
@@ -612,18 +782,18 @@
       });
 
       const payload = {
-        name: document.getElementById('customerName').value,
-        mobile_number: document.getElementById('mobileNumber').value,
-        place: document.getElementById('location').value,
+        name: document.getElementById('customerName').value.trim(),
+        mobile_number: document.getElementById('mobileNumber').value.trim().replace(/\D/g, ''),
+        place: document.getElementById('location').value.trim(),
         items: itemsList,
         fulfillment_type: fulfillmentRadio.value,
         scheduled_date: scheduledDateVal
       };
 
       try {
-        statusMsg.innerText = dict.msgSubmitting;
-        statusMsg.className = "mt-4 text-center text-sm font-semibold text-amber-600";
-        statusMsg.classList.remove('hidden');
+        submitButton.disabled = true;
+        submitButton.textContent = dict.msgSubmitting;
+        setStatus(dict.msgSubmitting, 'warning');
 
         const response = await fetch('/api/orders', {
           method: 'POST',
@@ -632,17 +802,19 @@
         });
 
         if (response.ok) {
-          statusMsg.innerText = dict.msgSuccess;
-          statusMsg.className = "mt-4 text-center text-sm font-semibold text-green-600";
-          document.getElementById('orderForm').reset();
+          setStatus(dict.msgSuccess, 'success');
+          e.target.reset();
           document.querySelectorAll('.item-qty').forEach(input => input.value = 1);
           document.getElementById('scheduledDateWrap').classList.add('hidden');
         } else {
-          throw new Error('Failed submission');
+          const errorText = await response.text();
+          throw new Error(errorText || 'Failed submission');
         }
       } catch (err) {
-        statusMsg.innerText = dict.msgError;
-        statusMsg.className = "mt-4 text-center text-sm font-semibold text-red-600";
+        setStatus(dict.msgError, 'error');
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = dict.btnSubmit;
       }
     });
   </script>
