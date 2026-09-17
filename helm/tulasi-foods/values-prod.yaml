@@ -39,7 +39,7 @@ frontend:
     replicas: 1
     image:
       repository: ghcr.io/nareshbaburoddam/tulasi-frontend
-      tag: "1.0.0.6"
+      tag: "1.0.0.7"
   # Standby Release (Testing version 1.0.0.6 before traffic cutover)
   green:
     enabled: false
