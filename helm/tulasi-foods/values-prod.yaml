@@ -5,7 +5,6 @@ serviceAccountName: tulasi-backed-sa
 imagePullSecret: ghcr-pull-secret
 secretProviderClass: tulasi-kv-secrets
 allowedOrigin: https://bluegreen.nareshroddam.in
-
 backend:
   image:
     repository: ghcr.io/nareshbaburoddam/tulasi-backend
@@ -20,11 +19,10 @@ backend:
   strategy:
     maxSurge: 0
     maxUnavailable: 1
-
 frontend:
   image:
     repository: ghcr.io/nareshbaburoddam/tulasi-frontend
-    tag: "1.0.0.6"
+    tag: "1.0.0.7"
   resources:
     requests:
       cpu: 50m
@@ -35,7 +33,6 @@ frontend:
   strategy:
     maxSurge: 0
     maxUnavailable: 1
-
   # Stable Production (Currently serving 100% traffic via activeColor: blue)
   blue:
     enabled: true
@@ -43,7 +40,6 @@ frontend:
     image:
       repository: ghcr.io/nareshbaburoddam/tulasi-frontend
       tag: "1.0.0.6"
-
   # Standby Release (Testing version 1.0.0.6 before traffic cutover)
   green:
     enabled: false
@@ -51,11 +47,9 @@ frontend:
     image:
       repository: ghcr.io/nareshbaburoddam/tulasi-frontend
       tag: "1.0.0.5"
-
 ingress:
   host: bluegreen.nareshroddam.in
   tlsSecret: tulasi-tls
-
 hpa:
   minReplicas: 1
   maxReplicas: 5
@@ -69,6 +63,5 @@ canary:
 traffic:
   stableWeight: 100
   canaryWeight: 0
-
 podMonitor:
   enabled: false
