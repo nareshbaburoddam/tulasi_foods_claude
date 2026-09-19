@@ -95,6 +95,7 @@
                                 <th>PICKUP / DELIVERY</th>
                                 <th>SCHEDULED DATE</th>
                                 <th>STATUS</th>
+                                <th>UPLOADED FILES</th>
                                 <th>REMARKS</th>
                                 <th>ACTION</th>
                             </tr>
@@ -275,6 +276,16 @@
                     statusHtml = `<span class="badge bg-secondary">${req.status}</span>`;
                 }
 
+                let uploadedFilesHtml = "";
+                if (req.uploaded_files && req.uploaded_files.length > 0) {
+                    uploadedFilesHtml = req.uploaded_files.map(file => {
+                        const url = file.download_url || `/uploads/${file.stored_name || file.file_name}`;
+                        return `<div class="mb-1"><a href="${url}" target="_blank" rel="noopener" class="text-primary text-decoration-underline">${file.file_name}</a></div>`;
+                    }).join('');
+                } else {
+                    uploadedFilesHtml = '<span class="text-muted">—</span>';
+                }
+
                 let remarksHtml = "";
                 if (isAdmin) {
                     remarksHtml = `<input type="text" class="form-control form-control-sm" value="${req.remarks || ''}" onchange="updateStatus(${req.id}, 'remarks', this.value)">`;
@@ -299,6 +310,7 @@
                     <td>${req.fulfillment_type || '-'}</td>
                     <td>${req.scheduled_date || '-'}</td>
                     <td>${statusHtml}</td>
+                    <td>${uploadedFilesHtml}</td>
                     <td>${remarksHtml}</td>
                     <td>${actionHtml}</td>
                 `;

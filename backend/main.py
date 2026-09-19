@@ -7,6 +7,8 @@ from datetime import datetime
 
 from fastapi import FastAPI, Depends, HTTPException, status, Request, Header, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
@@ -21,7 +23,7 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     raise RuntimeError("DATABASE_URL environment variable is required.")
 
-UPLOAD_DIR = os.path.join(os.getcwd(), "uploads")
+UPLOAD_DIR = os.getenv("APP_UPLOAD_DIR", os.path.join(os.getcwd(), "uploads"))
 ALLOWED_UPLOAD_EXTENSIONS = {".xlsx", ".xls", ".doc", ".docx", ".pdf", ".txt"}
 ALLOWED_UPLOAD_TYPES = {
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -44,6 +46,7 @@ Base.metadata.create_all(bind=engine)
 # FastAPI Application
 # ------------------------------------------------------------------------------
 app = FastAPI(title="Tulasi Foods API")
+app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 
 ##ALLOWED_ORIGIN = os.getenv("ALLOWED_ORIGIN", "https://bluegreen.nareshroddam.in")
 ALLOWED_ORIGIN = os.getenv(
@@ -218,10 +221,12 @@ def get_uploaded_files_for_request(db: Session, request_id: int) -> List[dict]:
         {
             "id": item.id,
             "file_name": item.file_name,
+            "stored_name": item.stored_name,
             "content_type": item.content_type,
             "size_bytes": item.size_bytes,
             "uploaded_at": item.uploaded_at.strftime("%Y-%m-%d %H:%M:%S") if item.uploaded_at else "",
             "storage_path": item.storage_path,
+            "download_url": f"/uploads/{item.stored_name}",
         }
         for item in results
     ]
