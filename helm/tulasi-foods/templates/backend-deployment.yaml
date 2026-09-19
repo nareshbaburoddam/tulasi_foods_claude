@@ -102,9 +102,21 @@ spec:
             - name: ALLOWED_ORIGIN
               value: "{{ .Values.allowedOrigin }}"
 
+            - name: APP_UPLOAD_DIR
+              value: {{ .Values.persistence.mountPath | quote }}
+
+          volumeMounts:
+            - name: uploads
+              mountPath: {{ .Values.persistence.mountPath | quote }}
+
           readinessProbe:
             httpGet:
               path: /health
               port: 8000
             initialDelaySeconds: 10
             periodSeconds: 10
+
+      volumes:
+        - name: uploads
+          persistentVolumeClaim:
+            claimName: backend-{{ .Values.color }}-uploads

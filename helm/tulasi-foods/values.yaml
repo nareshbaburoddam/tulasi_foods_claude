@@ -63,5 +63,11 @@ canary:
 traffic:
   stableWeight: 100
   canaryWeight: 0
+persistence:
+  enabled: true
+  size: 5Gi
+  accessMode: ReadWriteOnce
+  storageClassName: ""
+  mountPath: /app/uploads
 podMonitor:
   enabled: false
