@@ -34,3 +34,16 @@ class CustomerRequest(Base):
     scheduled_date = Column(String, nullable=True)      # date customer picks (pickup) or wants delivery
     status = Column(String, default="Pending")
     remarks = Column(Text, nullable=True)
+
+
+class DocumentUpload(Base):
+    __tablename__ = "document_uploads"
+
+    id = Column(Integer, primary_key=True, index=True)
+    request_id = Column(Integer, nullable=False, index=True)
+    file_name = Column(String, nullable=False)
+    stored_name = Column(String, nullable=False)
+    content_type = Column(String, nullable=True)
+    size_bytes = Column(Integer, nullable=False, default=0)
+    uploaded_at = Column(DateTime, default=datetime.utcnow)
+    storage_path = Column(String, nullable=False)

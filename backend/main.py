@@ -1,16 +1,17 @@
 import os
 import json
 import secrets
+import uuid
 from typing import List, Optional, Any, Union
 from datetime import datetime
 
-from fastapi import FastAPI, Depends, HTTPException, status, Request, Header
+from fastapi import FastAPI, Depends, HTTPException, status, Request, Header, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 
-from database import Base, User, CustomerRequest, UserRole
+from database import Base, User, CustomerRequest, UserRole, DocumentUpload
 from auth import hash_password, verify_password, create_access_token, decode_access_token
 
 # ------------------------------------------------------------------------------
@@ -19,6 +20,20 @@ from auth import hash_password, verify_password, create_access_token, decode_acc
 DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     raise RuntimeError("DATABASE_URL environment variable is required.")
+
+UPLOAD_DIR = os.path.join(os.getcwd(), "uploads")
+ALLOWED_UPLOAD_EXTENSIONS = {".xlsx", ".xls", ".doc", ".docx", ".pdf", ".txt"}
+ALLOWED_UPLOAD_TYPES = {
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "application/vnd.ms-excel",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/pdf",
+    "text/plain",
+    "application/octet-stream",
+}
+
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -197,6 +212,21 @@ def get_status_color(status_val: str) -> str:
         return "amber"
     return "blue"
 
+def get_uploaded_files_for_request(db: Session, request_id: int) -> List[dict]:
+    results = db.query(DocumentUpload).filter(DocumentUpload.request_id == request_id).order_by(DocumentUpload.uploaded_at.desc()).all()
+    return [
+        {
+            "id": item.id,
+            "file_name": item.file_name,
+            "content_type": item.content_type,
+            "size_bytes": item.size_bytes,
+            "uploaded_at": item.uploaded_at.strftime("%Y-%m-%d %H:%M:%S") if item.uploaded_at else "",
+            "storage_path": item.storage_path,
+        }
+        for item in results
+    ]
+
+
 def format_customer_request(req: CustomerRequest):
     date_str = req.date_time.strftime("%Y-%m-%d %H:%M:%S") if req.date_time else ""
     cleaned_materials = clean_materials_string(req.requested_materials)
@@ -234,8 +264,102 @@ class CustomerRequestCreate(BaseModel):
         populate_by_name = True
         extra = "allow"
 
+def validate_upload_file(file: UploadFile) -> None:
+    if not file or not file.filename:
+        raise HTTPException(status_code=422, detail="Upload file is missing a filename")
+
+    file_ext = os.path.splitext(file.filename)[1].lower()
+    if file_ext not in ALLOWED_UPLOAD_EXTENSIONS:
+        raise HTTPException(status_code=422, detail=f"Unsupported file type: {file.filename}")
+
+    if file.content_type and file.content_type not in ALLOWED_UPLOAD_TYPES:
+        raise HTTPException(status_code=422, detail=f"Unsupported content type for file: {file.filename}")
+
+
+def save_uploaded_file(file: UploadFile, request_id: int) -> dict:
+    validate_upload_file(file)
+
+    safe_name = os.path.basename(file.filename)
+    unique_name = f"{request_id}_{uuid.uuid4().hex}_{safe_name}"
+    storage_path = os.path.join(UPLOAD_DIR, unique_name)
+
+    contents = file.file.read()
+    with open(storage_path, "wb") as f:
+        f.write(contents)
+
+    upload = DocumentUpload(
+        request_id=request_id,
+        file_name=safe_name,
+        stored_name=unique_name,
+        content_type=file.content_type or "application/octet-stream",
+        size_bytes=len(contents),
+        storage_path=storage_path,
+    )
+    return upload
+
+
 @app.post("/api/orders", status_code=status.HTTP_201_CREATED)
-async def create_customer_request(payload: CustomerRequestCreate, db: Session = Depends(get_db)):
+async def create_customer_request(request: Request, db: Session = Depends(get_db)):
+    content_type = request.headers.get("content-type", "")
+
+    if "multipart/form-data" in content_type:
+        form = await request.form()
+        payload_name = form.get("name") or form.get("customerName") or "Guest"
+        payload_mobile = form.get("mobile_number") or form.get("mobileNumber") or ""
+        payload_location = form.get("place") or form.get("location") or ""
+        payload_items = form.get("items") or form.get("requestedMaterials") or "[]"
+        payload_fulfillment = form.get("fulfillment_type") or form.get("fulfillmentType") or ""
+        payload_schedule = form.get("scheduled_date") or form.get("scheduledDate") or ""
+        uploaded_files = form.getlist("files")
+
+        try:
+            items_value = json.loads(payload_items) if isinstance(payload_items, str) and payload_items.strip() else []
+        except json.JSONDecodeError:
+            items_value = []
+
+        c_name = payload_name.strip() or "Guest"
+        m_num = payload_mobile.strip() or ""
+        loc = payload_location.strip() or ""
+        fulfillment = payload_fulfillment.strip() or ""
+        sched_date = payload_schedule.strip() or ""
+        mats = items_value
+
+        if not m_num:
+            raise HTTPException(status_code=422, detail="Mobile number is required")
+
+        if fulfillment not in ("Pickup", "Delivery"):
+            raise HTTPException(status_code=422, detail="fulfillment_type must be 'Pickup' or 'Delivery'")
+
+        if not sched_date:
+            raise HTTPException(status_code=422, detail="scheduled_date is required")
+
+        mat_str = json.dumps(mats, ensure_ascii=False) if isinstance(mats, (list, dict)) else str(mats)
+
+        db_req = CustomerRequest(
+            customer_name=c_name,
+            mobile_number=m_num,
+            location=loc,
+            requested_materials=mat_str,
+            fulfillment_type=fulfillment,
+            scheduled_date=sched_date,
+            status="Pending",
+        )
+        db.add(db_req)
+        db.commit()
+        db.refresh(db_req)
+
+        for file in uploaded_files:
+            if not file or not getattr(file, "filename", None):
+                continue
+            uploaded = save_uploaded_file(file, db_req.id)
+            db.add(uploaded)
+
+        db.commit()
+        response_data = format_customer_request(db_req)
+        response_data["uploaded_files"] = get_uploaded_files_for_request(db, db_req.id)
+        return response_data
+
+    payload = CustomerRequestCreate.model_validate_json(await request.body())
     c_name = payload.name or payload.customer_name or "Guest"
     m_num = payload.mobile_number or payload.phone or ""
     loc = payload.place or payload.location or ""
@@ -266,7 +390,9 @@ async def create_customer_request(payload: CustomerRequestCreate, db: Session = 
     db.add(db_req)
     db.commit()
     db.refresh(db_req)
-    return format_customer_request(db_req)
+    response_data = format_customer_request(db_req)
+    response_data["uploaded_files"] = []
+    return response_data
 
 # ------------------------------------------------------------------------------
 # Admin: view / manage requests — requires a valid logged-in user
@@ -274,7 +400,12 @@ async def create_customer_request(payload: CustomerRequestCreate, db: Session = 
 @app.get("/api/requests")
 def get_requests(user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     requests = db.query(CustomerRequest).order_by(CustomerRequest.id.desc()).all()
-    return [format_customer_request(r) for r in requests]
+    result = []
+    for req in requests:
+        item = format_customer_request(req)
+        item["uploaded_files"] = get_uploaded_files_for_request(db, req.id)
+        result.append(item)
+    return result
 
 class CustomerRequestUpdate(BaseModel):
     status: Optional[str] = None
